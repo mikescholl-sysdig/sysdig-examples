@@ -1,0 +1,44 @@
+apiVersion: batch/v1 
+kind: CronJob 
+metadata:   
+  name: sdcjob-random-number-cron-job
+  labels:     
+    jobgroup: sdcjob-examples 
+spec:
+  schedule: "15 * * * * "
+  jobTemplate:
+    spec:
+      template:
+        metadata:       
+          name: sdcjob-random-number 
+          labels:         
+            jobgroup: sdcjob     
+        spec:       
+          containers:       
+          - name: sdcjob-random-number-generator
+            imagePullPolicy: Always
+            image: ghcr.io/mikescholl-sysdig/sysdig-examples/sdc-example-job:main              
+            env:
+              - name: NODE_NAME
+                valueFrom:
+                  fieldRef:
+                    fieldPath: spec.nodeName
+              - name: NAMESPACE
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.namespace
+              - name: JOB_NAME
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.name
+              - name: SYSDIG_MONITOR_API_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: sysdig-api-token
+                    key: SYSDIG_MONITOR_API_TOKEN
+              - name: SYSDIG_MONITOR_API_URL
+                valueFrom:
+                  secretKeyRef:
+                    name: sysdig-api-token
+                    key: SYSDIG_MONITOR_API_URL           
+          restartPolicy: Never
