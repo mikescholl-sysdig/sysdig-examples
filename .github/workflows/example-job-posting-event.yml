@@ -7,6 +7,10 @@ name: Create and publish image for example-job-posting-event
 
 on:
   push:
+    branches:
+      - main
+    paths:
+      - example-job-posting-event
 
 env:
   REGISTRY: ghcr.io
