@@ -47,7 +47,7 @@ resource  "sysdig_secure_policy" "disallowed_container_activity" {
   enabled = true
 
   // Scope selection
-  scope = "container.id != \"\""
+  scope = "kubernetes.namespace.name not in \"\""
 
   // Rule selection
   rule_names = [sysdig_secure_rule_falco.ts_exclude_rancher_shell.name]

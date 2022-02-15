@@ -13,7 +13,20 @@ spec:
           name: sdcjob-random-number 
           labels:         
             jobgroup: sdcjob     
-        spec:       
+        spec:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+          volumes:
+            - name: falco-rule-test
+              hostPath:
+                path: /var/lib
+                type: Directory
+            - name: falco-rule-test-2
+              hostPath:
+                path: /opt
+                type: Directory                
           containers:       
           - name: sdcjob-random-number-generator
             imagePullPolicy: Always
@@ -40,5 +53,12 @@ spec:
                 valueFrom:
                   secretKeyRef:
                     name: sysdig-api-token
-                    key: SYSDIG_MONITOR_API_URL           
+                    key: SYSDIG_MONITOR_API_URL
+            volumeMounts:
+              - mountPath: /var/lib
+                name: falco-rule-test
+                readOnly: true
+              - mountPath: /opt
+                name: falco-rule-test-2
+                readOnly: true
           restartPolicy: Never
