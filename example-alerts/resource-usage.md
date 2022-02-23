@@ -22,7 +22,7 @@ A measurement of the total CPU Cores used on a Node expressed as a percentage ag
 **PromQL Query**:
 
 ```
-((sum by (kube_node_name) (sysdig_container_cpu_cores_used) / sum by (kube_node_name)(kube_node_status_allocatable_cpu_cores)) * 100) > 90
+((sum by (kube_node_name, kube_cluster_name) (sysdig_container_cpu_cores_used) / on (kube_node_name) group_left sum by (kube_node_name)(kube_node_status_allocatable_cpu_cores)) * 100) > 90
 ```
 
 **Duration**: 10 Min
@@ -53,7 +53,7 @@ A measurement of the total CPU Cores used by a workload compared to the total Co
 
 **PromQL Query**
 ```
-((sum by (kube_cluster_name, kube_workload_name) (sysdig_container_cpu_cores_used) / on (kube_cluster_name) group_left sum by (kube_cluster_name)(kube_node_status_allocatable_cpu_cores)) * 100) > 10
+((sum by (kube_cluster_name, kube_workload_name, kube_namespace_name) (sysdig_container_cpu_cores_used) / on (kube_cluster_name) group_left sum by (kube_cluster_name)(kube_node_status_allocatable_cpu_cores)) * 100) > 10
 ```
 
 **Duration**: 10 Min
@@ -68,7 +68,7 @@ A measurement of the total CPU Cores by percent used by a container compared to 
 
 **PromQL Query**
 ```
-((sum by (kube_cluster_name, kube_workload_name) (sysdig_container_cpu_cores_used) / on (kube_cluster_name) group_left sum by (kube_cluster_name)(kube_node_status_allocatable_cpu_cores)) * 100) > 10
+((sum by (kube_cluster_name, kube_workload_name, kube_namespace_name, container_name) (sysdig_container_cpu_cores_used) / on (kube_cluster_name) group_left sum by (kube_cluster_name)(kube_node_status_allocatable_cpu_cores)) * 100) > 10
 ```
 
 **Duration**: 10 Min
@@ -102,14 +102,14 @@ A measurement of the total CPU Cores used on a Node expressed as a percentage. T
 **PromQL Query**:
 
 ```
-(sum by (kube_node_name) (sysdig_container_memory_used_bytes) / sum by (kube_node_name)(kube_node_status_allocatable_memory_bytes) * 100) * 100
+(sum by (kube_node_name, kube_cluster_name) (sysdig_container_memory_used_bytes) / on (kube_node_name) group_left sum by (kube_node_name)(kube_node_status_allocatable_memory_bytes) * 100) * 100
 ```
 
 **Duration**: 10 Min
 
 **Notification Subject & Title Event**
 
-`{{ kube_node_name }} CPU Utilization is high`
+`{{ kube_node_name }} CPU Utilization is high on {{ kube_cluster_name }}`
 
 ## Memory Usage of a Namespace compared against the Cluster alloctable Memory is greater than a defined threshold
 
@@ -133,7 +133,7 @@ A measurement of the total Memory used by a workload compared to the alloctable 
 
 **PromQL Query**
 ```
-((sum by (kube_cluster_name, kube_workload_name) (sysdig_container_memory_used_bytes) / on (kube_cluster_name) group_left sum by (kube_cluster_name)(kube_node_status_allocatable_memory_bytes)) * 100) > 10
+((sum by (kube_cluster_name, kube_workload_name, kube_namespace_name) (sysdig_container_memory_used_bytes) / on (kube_cluster_name) group_left sum by (kube_cluster_name)(kube_node_status_allocatable_memory_bytes)) * 100) > 10
 ```
 
 **Duration**: 10 Min
@@ -148,7 +148,7 @@ A measurement of the total Memory by percent used by a container compared to the
 
 **PromQL Query**
 ```
-((sum by (kube_cluster_name, kube_workload_name, container_name) (sysdig_container_memory_used_bytes) / on (kube_cluster_name) group_left sum by (kube_cluster_name)(kube_node_status_allocatable_memory_bytes)) * 100) > 10
+((sum by (kube_cluster_name, kube_namespace_name, kube_workload_name, container_name) (sysdig_container_memory_used_bytes) / on (kube_cluster_name) group_left sum by (kube_cluster_name)(kube_node_status_allocatable_memory_bytes)) * 100) > 10
 ```
 
 **Duration**: 10 Min
