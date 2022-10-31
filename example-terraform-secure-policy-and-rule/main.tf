@@ -2,14 +2,13 @@ terraform {
   required_providers {
     sysdig = {
       source = "sysdiglabs/sysdig"
-      version = "0.5.28"
     }
   }
 }
 
 provider "sysdig" {
   # Configuration options
-    sysdig_secure_url = "YOUR_SYSDIG_SECURE_URL"
+    sysdig_secure_url = "https://us2.app.sysdig.com"
     #sysdig_monitor_api_token - (Optional) The Sysdig Monitor API token, it must be present, but you can get it from the SYSDIG_MONITOR_API_TOKEN environment variable. 
     #Required if any sysdig_monitor_* resource or data source is used.
 
@@ -47,7 +46,7 @@ resource  "sysdig_secure_policy" "disallowed_container_activity" {
   enabled = true
 
   // Scope selection
-  scope = "kubernetes.namespace.name not in \"\""
+  scope = "kubernetes.namespace.name in (\"default\", \"kube-system\")"
 
   // Rule selection
   rule_names = [sysdig_secure_rule_falco.ts_exclude_rancher_shell.name]
